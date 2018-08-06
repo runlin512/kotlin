@@ -21760,6 +21760,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("eqeq.kt")
+            public void testEqeq() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/eqeq.kt");
+            }
+
             @TestMetadata("toByte.kt")
             public void testToByte() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toByte.kt");

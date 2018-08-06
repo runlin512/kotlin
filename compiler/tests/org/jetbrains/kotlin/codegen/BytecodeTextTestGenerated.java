@@ -2155,6 +2155,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("eqeqIntrinsic.kt")
+            public void testEqeqIntrinsic() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics/eqeqIntrinsic.kt");
+            }
+
             @TestMetadata("toSignedTypeIntrinsic.kt")
             public void testToSignedTypeIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics/toSignedTypeIntrinsic.kt");
