@@ -20657,6 +20657,39 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testVarargsOfUnsignedTypes() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/varargsOfUnsignedTypes.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnsignedArithmetics extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInUnsignedArithmetics() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("toByte.kt")
+            public void testToByte() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toByte.kt");
+            }
+
+            @TestMetadata("toInt.kt")
+            public void testToInt() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toInt.kt");
+            }
+
+            @TestMetadata("toLong.kt")
+            public void testToLong() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toLong.kt");
+            }
+
+            @TestMetadata("toShort.kt")
+            public void testToShort() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toShort.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/vararg")

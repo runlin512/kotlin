@@ -151,6 +151,8 @@ public class IntrinsicMethods {
         }
 
         declareArrayMethods();
+
+        UnsignedTypeIntrinsicsKt.registerIntrinsics(intrinsicsMap);
     }
 
     private void declareArrayMethods() {

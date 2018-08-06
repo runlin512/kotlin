@@ -2142,6 +2142,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testUnboxInlineClassesAfterSmartCasts() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unboxInlineClassesAfterSmartCasts.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class UnsignedArithmetics extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInUnsignedArithmetics() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("toSignedTypeIntrinsic.kt")
+            public void testToSignedTypeIntrinsic() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics/toSignedTypeIntrinsic.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/interfaces")
