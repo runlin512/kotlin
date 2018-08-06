@@ -97,6 +97,7 @@ class ShouldBeEnabled : Checker {
 
 fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
+    loader.clearAssertionStatus()
     loader.setDefaultAssertionStatus(v)
     val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
     return c.newInstance() as Checker
@@ -121,6 +122,8 @@ fun box(): String {
         return "FAIL 7"
     } catch (ignore: AssertionError) {
     }
+
+    Checker::class.java.classLoader.setDefaultAssertionStatus(true)
 
     return "OK"
 }

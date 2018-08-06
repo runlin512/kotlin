@@ -31,5 +31,6 @@ fun box(): String {
     var c = disableAssertions()
     builder { c.check() }
 
+    Dummy::class.java.classLoader.setDefaultAssertionStatus(true)
     return "OK"
 }

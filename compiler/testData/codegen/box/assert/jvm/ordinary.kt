@@ -98,5 +98,6 @@ fun box(): String {
     } catch (ignore: AssertionError) {
     }
 
+    Checker::class.java.classLoader.setDefaultAssertionStatus(true)
     return "OK"
 }

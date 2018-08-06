@@ -1,6 +1,8 @@
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
+// FULL_JDK
+// IGNORE_BACKEND: JVM_IR
 
 inline fun inlineMe() {
     assert(false) { "FROM INLINED" }
@@ -29,5 +31,6 @@ fun box(): String {
     var c = disableAssertions()
     c.check()
 
+    Dummy::class.java.classLoader.setDefaultAssertionStatus(true)
     return "OK"
 }

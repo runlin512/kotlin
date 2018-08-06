@@ -41,8 +41,7 @@ class Dummy
 fun disableAssertions(): Checker {
     val loader = Dummy::class.java.classLoader
     loader.setDefaultAssertionStatus(false)
-    val c = loader.loadClass("ShouldBeDisabled")
-    return c.newInstance() as Checker
+    return loader.loadClass("ShouldBeDisabled").newInstance() as Checker
 }
 
 fun box(): String {
@@ -52,5 +51,6 @@ fun box(): String {
     if (c.checkFalse()) return "FAIL 2"
     if (c.checkFalseWithMessage()) return "FAIL 3"
 
+    Dummy::class.java.classLoader.setDefaultAssertionStatus(true)
     return "OK"
 }

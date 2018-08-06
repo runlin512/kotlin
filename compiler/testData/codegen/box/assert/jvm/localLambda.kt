@@ -121,6 +121,7 @@ fun box(): String {
         return "FAIL 7"
     } catch (ignore: AssertionError) {
     }
+    Checker::class.java.classLoader.setDefaultAssertionStatus(true)
 
     return "OK"
 }

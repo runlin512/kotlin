@@ -73,5 +73,6 @@ fun box(): String {
     if (!c.checkTrueWithMessage()) return "FAIL 6"
     if (!c.checkFalseWithMessage()) return "FAIL 8"
 
+    Checker::class.java.classLoader.setDefaultAssertionStatus(true)
     return "OK"
 }

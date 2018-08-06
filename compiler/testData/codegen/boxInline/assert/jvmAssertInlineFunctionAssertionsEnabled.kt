@@ -1,7 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
+// FULL_JDK
 
 inline fun inlineMe() {
     assert(false) { "FROM INLINED" }
@@ -33,5 +33,6 @@ fun box(): String {
         return "FAIL 2"
     } catch (ignore: AssertionError) {}
 
+    Dummy::class.java.classLoader.setDefaultAssertionStatus(true)
     return "OK"
 }
