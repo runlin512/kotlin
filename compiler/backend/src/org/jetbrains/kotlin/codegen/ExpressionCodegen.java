@@ -2365,8 +2365,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert callGenerator == defaultCallGenerator || !tailRecursionCodegen.isTailRecursion(resolvedCall) :
                 "Tail recursive method can't be inlined: " + descriptor;
 
-        ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(this, callGenerator, descriptor.getValueParameters(),
-                                                                             callableMethod.getValueParameterTypes());
+        ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(
+                this, callGenerator, callableMethod, descriptor.getValueParameters()
+        );
 
         invokeMethodWithArguments(callableMethod, resolvedCall, receiver, callGenerator, argumentGenerator);
     }
@@ -2457,6 +2458,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (!isConstructor) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+            if (callableMethod instanceof CustomArgumentCoercion) {
+                receiver = ((CustomArgumentCoercion) callableMethod).coerceReceiver(receiver);
+            }
             receiver.put(receiver.type, receiver.kotlinType, v);
 
             // In regular cases we add an inline marker just before receiver is loaded (to spill the stack before a suspension)

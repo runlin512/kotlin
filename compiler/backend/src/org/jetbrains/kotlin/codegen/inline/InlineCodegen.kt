@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
-import org.jetbrains.kotlin.codegen.coroutines.*
+import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
+import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
+import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
+import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm
 import org.jetbrains.kotlin.codegen.intrinsics.bytecode
 import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -728,7 +731,8 @@ class PsiInlineCodegen(
         valueParameterDescriptor: ValueParameterDescriptor,
         argumentExpression: KtExpression,
         parameterType: Type,
-        parameterIndex: Int
+        parameterIndex: Int,
+        customArgumentCoercion: CustomArgumentCoercion
     ) {
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
             val lambdaInfo = rememberClosure(argumentExpression, parameterType, valueParameterDescriptor)
@@ -736,10 +740,8 @@ class PsiInlineCodegen(
             val receiverValue = getBoundCallableReferenceReceiver(argumentExpression)
             if (receiverValue != null) {
                 val receiver = codegen.generateReceiverValue(receiverValue, false)
-                putClosureParametersOnStack(
-                    lambdaInfo,
-                    StackValue.coercion(receiver, receiver.type.boxReceiverForBoundReference(), null)
-                )
+                val boundReceiver = StackValue.coercion(receiver, receiver.type.boxReceiverForBoundReference(), null)
+                putClosureParametersOnStack(lambdaInfo, customArgumentCoercion.coerceArgument(boundReceiver, parameterIndex))
             }
         } else {
             val value = codegen.gen(argumentExpression)
@@ -765,12 +767,22 @@ class PsiInlineCodegen(
         }
     }
 
-    override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
+    override fun putValueIfNeeded(
+        parameterType: JvmKotlinType,
+        value: StackValue,
+        kind: ValueKind,
+        parameterIndex: Int,
+        customArgumentCoercion: CustomArgumentCoercion
+    ) {
         if (processDefaultMaskOrMethodHandler(value, kind)) return
 
         assert(maskValues.isEmpty()) { "Additional default call arguments should be last ones, but " + value }
 
-        putArgumentOrCapturedToLocalVal(parameterType, value, -1, parameterIndex, kind)
+        putArgumentOrCapturedToLocalVal(
+            parameterType,
+            customArgumentCoercion.coerceArgument(value, parameterIndex),
+            -1, parameterIndex, kind
+        )
     }
 
     override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {

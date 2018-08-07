@@ -24,6 +24,7 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 public class CallBasedArgumentGenerator extends ArgumentGenerator {
     private final ExpressionCodegen codegen;
     private final CallGenerator callGenerator;
+    private final CustomArgumentCoercion customArgumentCoercion;
     private final List<ValueParameterDescriptor> valueParameters;
     private final List<Type> valueParameterTypes;
     private final boolean isVarargInvoke;
@@ -34,8 +35,33 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @NotNull List<Type> valueParameterTypes
     ) {
+        this(codegen, callGenerator, CustomArgumentCoercion.Identity.INSTANCE, valueParameters, valueParameterTypes);
+    }
+
+    public CallBasedArgumentGenerator(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull CallGenerator callGenerator,
+            @NotNull Callable callable,
+            @NotNull List<ValueParameterDescriptor> valueParameters
+    ) {
+        this(
+                codegen, callGenerator,
+                callable instanceof CustomArgumentCoercion ? (CustomArgumentCoercion) callable
+                                                           : CustomArgumentCoercion.Identity.INSTANCE,
+                valueParameters, callable.getValueParameterTypes()
+        );
+    }
+
+    private CallBasedArgumentGenerator(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull CallGenerator callGenerator,
+            @NotNull CustomArgumentCoercion customArgumentCoercion,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
+            @NotNull List<Type> valueParameterTypes
+    ) {
         this.codegen = codegen;
         this.callGenerator = callGenerator;
+        this.customArgumentCoercion = customArgumentCoercion;
         this.valueParameters = valueParameters;
         this.valueParameterTypes = valueParameterTypes;
 
@@ -55,7 +81,13 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         assert valueArgument != null;
         KtExpression argumentExpression = valueArgument.getArgumentExpression();
         assert argumentExpression != null : valueArgument.asElement().getText();
-        callGenerator.genValueAndPut(parameter, argumentExpression, isVarargInvoke ? OBJECT_TYPE : valueParameterTypes.get(i), i);
+        callGenerator.genValueAndPut(
+                parameter,
+                argumentExpression,
+                isVarargInvoke ? OBJECT_TYPE : valueParameterTypes.get(i),
+                i,
+                customArgumentCoercion
+        );
     }
 
     @Override
@@ -64,7 +96,8 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
                 getJvmKotlinType(valueParameterTypes, valueParameters, i),
                 createDefaultValue(valueParameterTypes.get(i)),
                 ValueKind.DEFAULT_PARAMETER,
-                i
+                i,
+                customArgumentCoercion
         );
     }
 
@@ -74,7 +107,13 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
         // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
         // while its lower bound may be Nothing-typed after approximation
         StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
-        callGenerator.putValueIfNeeded(getJvmKotlinType(valueParameterTypes, valueParameters, i), lazyVararg, ValueKind.GENERAL_VARARG, i);
+        callGenerator.putValueIfNeeded(
+                getJvmKotlinType(valueParameterTypes, valueParameters, i),
+                lazyVararg,
+                ValueKind.GENERAL_VARARG,
+                i,
+                customArgumentCoercion
+        );
     }
 
     @Override

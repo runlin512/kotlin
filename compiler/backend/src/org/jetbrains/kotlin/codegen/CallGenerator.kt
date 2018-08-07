@@ -26,14 +26,14 @@ interface CallGenerator {
     class DefaultCallGenerator(private val codegen: ExpressionCodegen) : CallGenerator {
 
         override fun genCallInner(
-                callableMethod: Callable,
-                resolvedCall: ResolvedCall<*>?,
-                callDefault: Boolean,
-                codegen: ExpressionCodegen) {
+            callableMethod: Callable,
+            resolvedCall: ResolvedCall<*>?,
+            callDefault: Boolean,
+            codegen: ExpressionCodegen
+        ) {
             if (!callDefault) {
                 callableMethod.genInvokeInstruction(codegen.v)
-            }
-            else {
+            } else {
                 (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.v)
             }
         }
@@ -50,7 +50,8 @@ interface CallGenerator {
             valueParameterDescriptor: ValueParameterDescriptor,
             argumentExpression: KtExpression,
             parameterType: Type,
-            parameterIndex: Int
+            parameterIndex: Int,
+            customArgumentCoercion: CustomArgumentCoercion
         ) {
             val container = valueParameterDescriptor.containingDeclaration
             val isVarargInvoke = JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(container)
@@ -65,7 +66,7 @@ interface CallGenerator {
                 v.iconst(parameterIndex)
             }
 
-            val value = codegen.gen(argumentExpression)
+            val value = customArgumentCoercion.coerceArgument(codegen.gen(argumentExpression), parameterIndex)
             value.put(parameterType, valueParameterDescriptor.original.type, v)
 
             if (isVarargInvoke) {
@@ -74,12 +75,19 @@ interface CallGenerator {
         }
 
         override fun putCapturedValueOnStack(
-                stackValue: StackValue, valueType: Type, paramIndex: Int) {
+            stackValue: StackValue, valueType: Type, paramIndex: Int
+        ) {
             stackValue.put(stackValue.type, stackValue.kotlinType, codegen.v)
         }
 
-        override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
-            value.put(value.type, value.kotlinType, codegen.v)
+        override fun putValueIfNeeded(
+            parameterType: JvmKotlinType,
+            value: StackValue,
+            kind: ValueKind,
+            parameterIndex: Int,
+            customArgumentCoercion: CustomArgumentCoercion
+        ) {
+            customArgumentCoercion.coerceArgument(value, parameterIndex).put(value.type, value.kotlinType, codegen.v)
         }
 
         override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) {
@@ -117,26 +125,32 @@ interface CallGenerator {
     fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen)
 
     fun genValueAndPut(
-            valueParameterDescriptor: ValueParameterDescriptor,
-            argumentExpression: KtExpression,
-            parameterType: Type,
-            parameterIndex: Int)
+        valueParameterDescriptor: ValueParameterDescriptor,
+        argumentExpression: KtExpression,
+        parameterType: Type,
+        parameterIndex: Int,
+        customArgumentCoercion: CustomArgumentCoercion = CustomArgumentCoercion.Identity
+    )
 
     fun putValueIfNeeded(
-            parameterType: JvmKotlinType,
-            value: StackValue) {
+        parameterType: JvmKotlinType,
+        value: StackValue
+    ) {
         putValueIfNeeded(parameterType, value, ValueKind.GENERAL)
     }
 
     fun putValueIfNeeded(
-            parameterType: JvmKotlinType,
-            value: StackValue,
-            kind: ValueKind = ValueKind.GENERAL,
-            parameterIndex: Int = -1)
+        parameterType: JvmKotlinType,
+        value: StackValue,
+        kind: ValueKind = ValueKind.GENERAL,
+        parameterIndex: Int = -1,
+        customArgumentCoercion: CustomArgumentCoercion = CustomArgumentCoercion.Identity
+    )
 
     fun putCapturedValueOnStack(
-            stackValue: StackValue,
-            valueType: Type, paramIndex: Int)
+        stackValue: StackValue,
+        valueType: Type, paramIndex: Int
+    )
 
     fun processAndPutHiddenParameters(justProcess: Boolean)
 

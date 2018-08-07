@@ -1152,9 +1152,8 @@ public abstract class StackValue {
             callGenerator =
                     !isComplexOperationWithDup ? codegen.getOrCreateCallGenerator(resolvedCall) : codegen.defaultCallGenerator;
             return new CallBasedArgumentGenerator(
-                    codegen,
-                    callGenerator,
-                    resolvedCall.getResultingDescriptor().getValueParameters(), callable.getValueParameterTypes()
+                    codegen, callGenerator, callable,
+                    resolvedCall.getResultingDescriptor().getValueParameters()
             );
         }
 

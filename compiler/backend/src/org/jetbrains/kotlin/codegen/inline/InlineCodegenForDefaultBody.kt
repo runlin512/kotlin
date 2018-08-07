@@ -84,12 +84,19 @@ class InlineCodegenForDefaultBody(
         valueParameterDescriptor: ValueParameterDescriptor,
         argumentExpression: KtExpression,
         parameterType: Type,
-        parameterIndex: Int
+        parameterIndex: Int,
+        customArgumentCoercion: CustomArgumentCoercion
     ) {
         throw UnsupportedOperationException("Shouldn't be called")
     }
 
-    override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
+    override fun putValueIfNeeded(
+        parameterType: JvmKotlinType,
+        value: StackValue,
+        kind: ValueKind,
+        parameterIndex: Int,
+        customArgumentCoercion: CustomArgumentCoercion
+    ) {
         //original method would be inlined directly into default impl body without any inline magic
         //so we no need to load variables on stack to further method call
     }
