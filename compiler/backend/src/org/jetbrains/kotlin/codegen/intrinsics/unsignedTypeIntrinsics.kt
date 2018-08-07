@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
@@ -14,7 +12,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 private val KOTLIN_PACKAGE_FQNAME = FqName("kotlin")
 
-enum class IntegerTypePair(val asmType: Type, val bitwiseType: Type) {
+enum class IntegerTypePair(val baseType: Type, val arithmeticType: Type) {
     Byte(Type.BYTE_TYPE, Type.INT_TYPE),
     Short(Type.SHORT_TYPE, Type.INT_TYPE),
     Int(Type.INT_TYPE, Type.INT_TYPE),
@@ -31,13 +29,6 @@ private fun IntrinsicsMap.declareIntrinsicMethod(classFqName: FqName, methodName
     registerIntrinsic(classFqName, null, methodName, arity, implementation)
 }
 
-class ConversionWithUnsigned(private val fromType: IntegerTypePair, private val toType: IntegerTypePair) : IntrinsicMethod() {
-    override fun toCallable(method: CallableMethod): Callable =
-        createUnaryIntrinsicCallable(method) { v ->
-            v.coerceWithUnsigned(fromType, toType)
-        }
-}
-
 private fun InstructionAdapter.putSizeMask(type: IntegerTypePair, bitwiseType: Type) {
     assert(bitwiseType == Type.INT_TYPE || bitwiseType == Type.LONG_TYPE) {
         "I or J expected: $bitwiseType"
@@ -51,7 +42,7 @@ private fun InstructionAdapter.putSizeMask(type: IntegerTypePair, bitwiseType: T
     }
 }
 
-private fun InstructionAdapter.coerceWithUnsigned(fromType: IntegerTypePair, toType: IntegerTypePair) {
+internal fun InstructionAdapter.coerceWithUnsigned(fromType: IntegerTypePair, toType: IntegerTypePair) {
     when {
         // Widening conversion
         // E.g.:
@@ -60,17 +51,17 @@ private fun InstructionAdapter.coerceWithUnsigned(fromType: IntegerTypePair, toT
         // UByte.toUShort() = data.toUShort()
         //                  == UShort(data.toShort() and 0xFF)
         fromType < toType -> {
-            StackValue.coerce(fromType.asmType, toType.asmType, this)
-            putSizeMask(fromType, toType.bitwiseType)
-            and(toType.bitwiseType)
-            StackValue.coerce(toType.bitwiseType, toType.asmType, this)
+            StackValue.coerce(fromType.baseType, toType.baseType, this)
+            putSizeMask(fromType, toType.arithmeticType)
+            and(toType.arithmeticType)
+            StackValue.coerce(toType.arithmeticType, toType.baseType, this)
         }
 
         // Narrowing conversion
         // E.g.:
         // UInt.toShort() = data.toShort()
         fromType > toType -> {
-            StackValue.coerce(fromType.asmType, toType.asmType, this)
+            StackValue.coerce(fromType.baseType, toType.baseType, this)
         }
 
         // Identity conversion, do nothing
@@ -79,12 +70,12 @@ private fun InstructionAdapter.coerceWithUnsigned(fromType: IntegerTypePair, toT
 }
 
 internal fun IntrinsicsMap.registerIntrinsics() {
-    for (fromType in IntegerTypePair.values()) {
-        for (toType in IntegerTypePair.values()) {
-            val conversionWithUnsigned = ConversionWithUnsigned(fromType, toType)
-            declareIntrinsicMethod(fromType.unsignedFqName, toType.toSigned, 0, conversionWithUnsigned)
-            declareIntrinsicMethod(fromType.unsignedFqName, toType.toUnsigned, 0, conversionWithUnsigned)
-            registerIntrinsic(KOTLIN_PACKAGE_FQNAME, fromType.signedFqName.toUnsafe(), toType.toUnsigned, 0, conversionWithUnsigned)
+    for (thisType in IntegerTypePair.values()) {
+        for (otherType in IntegerTypePair.values()) {
+            val conversionWithUnsigned = ConversionWithUnsigned(thisType, otherType)
+            declareIntrinsicMethod(thisType.unsignedFqName, otherType.toSigned, 0, conversionWithUnsigned)
+            declareIntrinsicMethod(thisType.unsignedFqName, otherType.toUnsigned, 0, conversionWithUnsigned)
+            registerIntrinsic(KOTLIN_PACKAGE_FQNAME, thisType.signedFqName.toUnsafe(), otherType.toUnsigned, 0, conversionWithUnsigned)
         }
     }
 }
