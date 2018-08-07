@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumen
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
+import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.*
@@ -57,7 +58,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
     module: Module,
     rootModel: ModuleRootModel?,
     platformKind: TargetPlatformKind<*>? = null, // if null, detect by module dependencies
-    languageVersion: String? = null
+    compilerVersion: String? = null
 ) {
     val project = module.project
 
@@ -80,7 +81,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
 
     if (shouldInferLanguageLevel) {
         languageLevel = (if (useProjectSettings) LanguageVersion.fromVersionString(commonArguments.languageVersion) else null)
-                ?: getDefaultLanguageLevel(module, languageVersion)
+                ?: getDefaultLanguageLevel(module, compilerVersion)
     }
 
     if (shouldInferAPILevel) {
@@ -162,6 +163,8 @@ fun KotlinFacet.configureFacet(
         }
         this.coroutineSupport = coroutineSupport
     }
+
+    module.externalCompilerVersion = compilerVersion
 }
 
 fun KotlinFacet.noVersionAutoAdvance() {
@@ -248,7 +251,7 @@ fun parseCompilerArgumentsToFacet(
     arguments: List<String>,
     defaultArguments: List<String>,
     kotlinFacet: KotlinFacet,
-    modelsProvider: IdeModifiableModelsProvider
+    modelsProvider: IdeModifiableModelsProvider?
 ) {
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
@@ -264,7 +267,8 @@ fun parseCompilerArgumentsToFacet(
         // Retain only fields exposed (and not explicitly ignored) in facet configuration editor.
         // The rest is combined into string and stored in CompilerSettings.additionalArguments
 
-        kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
+        if (modelsProvider != null)
+            kotlinFacet.module.configureSdkIfPossible(compilerArguments, modelsProvider)
 
         val primaryFields = compilerArguments.primaryFields
         val ignoredFields = compilerArguments.ignoredFields

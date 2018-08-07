@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -43,7 +44,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             when (declaration) {
                 is IrConstructor -> {
                     classBlock.statements += declaration.accept(transformer, context)
-                    classBlock.statements += generateInheritanceCode()
+                    classModel.preDeclarationBlock.statements += generateInheritanceCode()
                 }
                 is IrSimpleFunction -> {
                     generateMemberFunction(declaration)?.let { classBlock.statements += it }
@@ -84,7 +85,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
                 val implClassDesc = it.descriptor.containingDeclaration as ClassDescriptor
-                if (!KotlinBuiltIns.isAny(implClassDesc)) {
+                if (!KotlinBuiltIns.isAny(implClassDesc) && !it.isEffectivelyExternal()) {
                     val implMethodName = context.getNameForSymbol(it.symbol)
                     val implClassName = context.getNameForSymbol(IrClassSymbolImpl(implClassDesc))
 
@@ -115,6 +116,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         functionBody.statements += JsIf(
             JsBinaryOperation(JsBinaryOperator.REF_EQ, instanceVar.makeRef(), JsNullLiteral()),
+            // TODO: Fix initialization order
             jsAssignment(instanceVar.makeRef(), JsNew(classNameRef)).makeStmt()
         )
         functionBody.statements += JsReturn(instanceVar.makeRef())
@@ -127,7 +129,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             val func = JsFunction(JsFunctionScope(context.currentScope, "Ctor for ${irClass.name}"), JsBlock(), "Ctor for ${irClass.name}")
             func.name = className
             classBlock.statements += func.makeStmt()
-            classBlock.statements += generateInheritanceCode()
+            classModel.preDeclarationBlock.statements += generateInheritanceCode()
         }
     }
 
@@ -163,7 +165,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         JsArrayLiteral(
             irClass.superTypes.mapNotNull {
                 val symbol = it.classifierOrFail
-                if (symbol.isInterface) JsNameRef(context.getNameForSymbol(symbol)) else null
+                // TODO: make sure that there is a test which breaks when isExternal is used here instead of isEffectivelyExternal
+                if (symbol.isInterface && !symbol.isEffectivelyExternal()) JsNameRef(context.getNameForSymbol(symbol)) else null
             }
         )
     )

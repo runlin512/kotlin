@@ -140,7 +140,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
                 declaration.startOffset, declaration.endOffset,
                 declaration.origin, it
             ).apply {
-                val retStmt = JsIrBuilder.buildReturn(it, JsIrBuilder.buildGetValue(thisSymbol), context)
+                val retStmt = JsIrBuilder.buildReturn(it, JsIrBuilder.buildGetValue(thisSymbol), context.irBuiltIns.nothingType)
                 val statements = (declaration.body as IrStatementContainer).statements
 
                 valueParameters += (declaration.valueParameters + thisParam)
@@ -174,7 +174,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
                 typeParameters += ctorOrig.typeParameters
 //                parent = ctorOrig.parent
 
-                val returnType = type
+                returnType = type
                 val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
                 val irCreateCall = JsIrBuilder.buildCall(
                     createFunctionIntrinsic.symbol,
@@ -190,7 +190,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) : IrElementTransfor
 
 //                typeParameters.mapIndexed { i, t -> ctorImpl.typeParameters[i].descriptor ->  }
                 }
-                val irReturn = JsIrBuilder.buildReturn(it, irDelegateCall, context)
+                val irReturn = JsIrBuilder.buildReturn(it, irDelegateCall, context.irBuiltIns.nothingType)
 
 
                 body = JsIrBuilder.buildBlockBody(listOf(irReturn))
