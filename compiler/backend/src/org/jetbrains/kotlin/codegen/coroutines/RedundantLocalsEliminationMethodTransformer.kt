@@ -171,21 +171,31 @@ class RedundantLocalsEliminationMethodTransformer(private val languageVersionSet
         ignoreLocalVariableTable: Boolean,
         predicate: (AbstractInsnNode) -> Boolean
     ): Map<AbstractInsnNode, AbstractInsnNode> {
-        val insns = methodNode.instructions.asSequence().filter { predicate(it) }.toList()
+        val insns = methodNode.instructions.asSequence().filter(predicate).toList()
 
         val cfg = ControlFlowGraph.build(methodNode)
         val res = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
 
         for (insn in insns) {
-            val succ = findImmediateSuccessors(insn, cfg, methodNode).singleOrNull() ?: continue
-            if (succ.opcode != Opcodes.ASTORE) continue
+            val astore = findImmediateSuccessors(insn, cfg, methodNode).singleOrNull() ?: continue
+            if (astore.opcode != Opcodes.ASTORE) continue
             if (methodNode.instructions.asSequence().count {
-                    it.opcode == Opcodes.ASTORE && it.localIndex() == succ.localIndex()
+                    it.opcode == Opcodes.ASTORE && it.localIndex() == astore.localIndex()
                 } != 1) continue
-            if (!ignoreLocalVariableTable && methodNode.localVariables.firstOrNull { it.index == succ.localIndex() } != null) continue
-            val sources = findSourceInstructions(internalClassName, methodNode, listOf(succ), ignoreCopy = false).values.flatten()
-            if (sources.size > 1) continue
-            res[insn] = succ
+            if (!ignoreLocalVariableTable && methodNode.localVariables.firstOrNull { it.index == astore.localIndex() } != null) continue
+            val aload = findImmediateSuccessors(astore, cfg, methodNode)
+                .singleOrNull { it.opcode == Opcodes.ALOAD && it.localIndex() == astore.localIndex() } ?: continue
+            // if there are multiple sources of ALOAD, we cannot remove it
+            if (findSourceInstructions(internalClassName, methodNode, listOf(aload), ignoreCopy = false).values.flatten().size > 1) continue
+            // if after replacement there will be multiple sources of ALOAD, instead of one, the replacement is not safe
+            if (insn.opcode == Opcodes.ALOAD) {
+                val tmp = insn.clone()
+                methodNode.instructions.set(aload, tmp)
+                val sources = findSourceInstructions(internalClassName, methodNode, listOf(tmp), ignoreCopy = false).values.flatten()
+                methodNode.instructions.set(tmp, aload)
+                if (sources.size > 1) continue
+            }
+            res[insn] = astore
         }
 
         return res
