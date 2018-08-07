@@ -48,7 +48,7 @@ class ConvertSealedSubClassToObjectFix : LocalQuickFix {
 
     private fun KtClass.changeToObject(factory: KtPsiFactory) {
         getClassOrInterfaceKeyword()?.replace(factory.createExpression(KtTokens.OBJECT_KEYWORD.value))
-        secondaryConstructors.forEach { delete() }
+        secondaryConstructors.forEach { it.delete() }
         primaryConstructor?.delete()
     }
 
