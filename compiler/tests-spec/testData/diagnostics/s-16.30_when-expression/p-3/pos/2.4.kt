@@ -7,7 +7,7 @@
  PARAGRAPH: 3
  SENTENCE 2: Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
  NUMBER: 4
- DESCRIPTION: 'When' without bound value and different variants of the boolean conditions (boolean literals and return boolean values).
+ DESCRIPTION: 'When' without bound value and different variants of the boolean conditions (boolean literals and values of Boolean type).
  */
 
 // CASE DESCRIPTION: 'When' without 'else' branch.

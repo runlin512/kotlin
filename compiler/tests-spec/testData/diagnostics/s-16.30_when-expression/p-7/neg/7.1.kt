@@ -6,38 +6,32 @@
  SECTION 16.30: When expression
  PARAGRAPH: 7
  SENTENCE 7: The else condition, which works the exact same way as it would in the form without bound expression.
- NUMBER: 1
- DESCRIPTION: 'When' with invalid else condition.
+ NUMBER: 2
+ DESCRIPTION: 'When' with bound value and with else branch not in the last position.
  */
 
-// CASE DESCRIPTION: 'When' with only one invalid 'else' branch.
-fun case_1(value: Int) {
-    when (value) {
-        else -><!SYNTAX!><!>
-    }
+fun case_1(value: Int): String = when (value) {
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
+    <!UNREACHABLE_CODE!>1 -> ""<!>
 }
 
-// CASE DESCRIPTION: 'When' with only two invalid 'else' branches.
-fun case_2(value: Int) {
-    when (value) {
-        else -><!SYNTAX!><!>
-        else -><!SYNTAX!><!>
-    }
+fun case_2(value: Int): String = when (value) {
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
+    <!UNREACHABLE_CODE!>1 -> ""<!>
+    <!UNREACHABLE_CODE!>2 -> ""<!>
 }
 
-// CASE DESCRIPTION: 'When' with two not 'else' valid branches and invalid 'else' branch.
-fun case_3(value: Int) {
-    when (value) {
-        1 -> println("1")
-        2 -> println("2")
-        else -><!SYNTAX!><!>
-    }
+fun case_3(value: Int): String = when (value) {
+    1 -> ""
+    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
+    <!UNREACHABLE_CODE!>2 -> ""<!>
 }
 
-// CASE DESCRIPTION: 'When' with one not 'else' valid branch and invalid 'else' branch.
-fun case_4(value: Int) {
+fun case_4(value: Int): String {
     when (value) {
-        1 -> println("!")
-        else -><!SYNTAX!><!>
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> return ""
+        <!UNREACHABLE_CODE!>else -> return ""<!>
     }
+
+    <!UNREACHABLE_CODE!>return ""<!>
 }

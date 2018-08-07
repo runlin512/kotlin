@@ -1,5 +1,5 @@
 /*
- KOTLIN DIAGNOSTIC SPEC TEST (NEGATIVE)
+ KOTLIN PSI SPEC TEST (NEGATIVE)
 
  SECTION 16.30: When expression
  PARAGRAPH: 3
@@ -10,6 +10,6 @@
 
 fun case_1() {
     when {
-        <!SYNTAX!><!>-> { println(1) }
+        -> { println(1) }
     }
 }

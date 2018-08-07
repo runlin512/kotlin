@@ -71,20 +71,8 @@ fun case_2(value1: String, value2: Char, value3: _BasicTypesProvider): String {
     return ""
 }
 
-// CASE DESCRIPTION: 'When' with Nothing in 'when condition'.
-fun case_3(value1: Nothing, <!UNUSED_PARAMETER!>value2<!>: _BasicTypesProvider): String {
-    when {
-        value1 -> <!UNREACHABLE_CODE!>return ""<!>
-        <!UNREACHABLE_CODE!>value2.getNothing() -> return ""<!>
-        <!UNREACHABLE_CODE!>getNothing() -> return ""<!>
-        <!UNREACHABLE_CODE!>throw Exception() -> return ""<!>
-    }
-
-    <!UNREACHABLE_CODE!>return ""<!>
-}
-
 // CASE DESCRIPTION: 'When' with Unit in 'when condition'.
-fun case_4(value1: Unit, value2: _BasicTypesProvider): String {
+fun case_3(value1: Unit, value2: _BasicTypesProvider): String {
     when {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>value2.getUnit()<!> -> return ""
@@ -97,7 +85,7 @@ fun case_4(value1: Unit, value2: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with Any in 'when condition'.
-fun case_5(value1: Any, value2: _BasicTypesProvider): String {
+fun case_4(value1: Any, value2: _BasicTypesProvider): String {
     when {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>value2.getAny()<!> -> return ""
@@ -108,7 +96,7 @@ fun case_5(value1: Any, value2: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with List (Collection example) in 'when condition'.
-fun case_6(value1: List<Int>, value2: _BasicTypesProvider): String {
+fun case_5(value1: List<Int>, value2: _BasicTypesProvider): String {
     when {
         <!TYPE_MISMATCH!>value1<!> -> return ""
         <!TYPE_MISMATCH!>value2.getList()<!> -> return ""
@@ -119,7 +107,7 @@ fun case_6(value1: List<Int>, value2: _BasicTypesProvider): String {
 }
 
 // CASE DESCRIPTION: 'When' with range expression (IntRange) in 'when condition'.
-fun case_7(value1: Int, value2: Int): String {
+fun case_6(value1: Int, value2: Int): String {
     when {
         <!TYPE_MISMATCH!>-10..-1<!> -> return ""
         <!TYPE_MISMATCH!>-0..0<!> -> return ""

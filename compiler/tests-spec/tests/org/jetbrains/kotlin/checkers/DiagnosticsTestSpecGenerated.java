@@ -226,16 +226,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/neg/1.1.kt");
                 }
 
-                @TestMetadata("1.2.kt")
-                public void test1_2() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/neg/1.2.kt");
-                }
-
-                @TestMetadata("1.3.kt")
-                public void test1_3() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/neg/1.3.kt");
-                }
-
                 @TestMetadata("2.1.kt")
                 public void test2_1() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/neg/2.1.kt");
@@ -244,11 +234,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 @TestMetadata("2.2.kt")
                 public void test2_2() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/neg/2.2.kt");
-                }
-
-                @TestMetadata("2.3.kt")
-                public void test2_3() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/neg/2.3.kt");
                 }
 
                 public void testAllFilesPresentInNeg() throws Exception {
@@ -409,6 +394,16 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/pos/2.5.kt");
                 }
 
+                @TestMetadata("2.6.kt")
+                public void test2_6() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/pos/2.6.kt");
+                }
+
+                @TestMetadata("2.7.kt")
+                public void test2_7() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/pos/2.7.kt");
+                }
+
                 public void testAllFilesPresentInPos() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
@@ -487,21 +482,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 @TestMetadata("1.1.kt")
                 public void test1_1() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/neg/1.1.kt");
-                }
-
-                @TestMetadata("1.2.kt")
-                public void test1_2() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/neg/1.2.kt");
-                }
-
-                @TestMetadata("1.3.kt")
-                public void test1_3() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/neg/1.3.kt");
-                }
-
-                @TestMetadata("1.4.kt")
-                public void test1_4() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/neg/1.4.kt");
                 }
 
                 public void testAllFilesPresentInNeg() throws Exception {
@@ -607,6 +587,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/pos/1.25.kt");
                 }
 
+                @TestMetadata("1.26.kt")
+                public void test1_26() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/pos/1.26.kt");
+                }
+
                 @TestMetadata("1.3.kt")
                 public void test1_3() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-6/pos/1.3.kt");
@@ -673,16 +658,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/1.1.kt");
                 }
 
-                @TestMetadata("1.2.kt")
-                public void test1_2() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/1.2.kt");
-                }
-
-                @TestMetadata("1.3.kt")
-                public void test1_3() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/1.3.kt");
-                }
-
                 @TestMetadata("3.1.kt")
                 public void test3_1() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/3.1.kt");
@@ -691,11 +666,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 @TestMetadata("3.2.kt")
                 public void test3_2() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/3.2.kt");
-                }
-
-                @TestMetadata("3.3.kt")
-                public void test3_3() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/3.3.kt");
                 }
 
                 @TestMetadata("5.1.kt")
@@ -708,14 +678,14 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/5.2.kt");
                 }
 
+                @TestMetadata("5.3.kt")
+                public void test5_3() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/5.3.kt");
+                }
+
                 @TestMetadata("7.1.kt")
                 public void test7_1() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/7.1.kt");
-                }
-
-                @TestMetadata("7.2.kt")
-                public void test7_2() throws Exception {
-                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/neg/7.2.kt");
                 }
 
                 public void testAllFilesPresentInNeg() throws Exception {
@@ -749,6 +719,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 @TestMetadata("1.4.kt")
                 public void test1_4() throws Exception {
                     runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/pos/1.4.kt");
+                }
+
+                @TestMetadata("1.5.kt")
+                public void test1_5() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/s-16.30_when-expression/p-7/pos/1.5.kt");
                 }
 
                 @TestMetadata("3.1.kt")

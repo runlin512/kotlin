@@ -22,14 +22,14 @@ fun case_1(value: Any): String {
     return ""
 }
 
-// CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various basic types.
-fun case_2(value: Any): String = when (value) {
-    is Int -> ""
-    is Float -> ""
-    is Double -> ""
-    is String -> ""
-    is Char -> ""
-    is Boolean -> ""
+// CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various nullable basic types.
+fun case_2(value: Any?): String = when (value) {
+    is Int? -> ""
+    is Float? -> ""
+    is Double? -> ""
+    is String? -> ""
+    is Char? -> ""
+    is Boolean? -> ""
     else -> ""
 }
 
@@ -39,10 +39,10 @@ fun case_3(value: Any): String = when (value) {
     else -> ""
 }
 
-// CASE DESCRIPTION: 'When' with type test condition on the one basic types (Int).
-fun case_4(value: Any): String {
+// CASE DESCRIPTION: 'When' with type test condition on the one nullable basic types (Int).
+fun case_4(value: Any?): String {
     when (value) {
-        is Int -> return ""
+        is Int? -> return ""
     }
 
     return ""
@@ -54,14 +54,32 @@ fun case_5(value: Any): String = when (value) {
     else -> ""
 }
 
+// CASE DESCRIPTION: 'When' with 'else' branch and type test condition on Any.
+fun case_6(value: Any?): String = when (value) {
+    <!USELESS_IS_CHECK!>is Any?<!> -> ""
+    else -> ""
+}
+
 // CASE DESCRIPTION: 'When' with 'else' branch and type test condition on Nothing.
-fun case_6(value: Any): String = when (value) {
+fun case_7(value: Any): String = when (value) {
     is Nothing -> ""
     else -> ""
 }
 
+// CASE DESCRIPTION: 'When' with 'else' branch and type test condition on nullable Nothing.
+fun case_8(value: Any): String = when (value) {
+    is Nothing? -> ""
+    else -> ""
+}
+
 // CASE DESCRIPTION: 'When' with 'else' branch and type test condition on Unit.
-fun case_7(value: Any): String = when (value) {
+fun case_9(value: Any): String = when (value) {
     is Unit -> ""
+    else -> ""
+}
+
+// CASE DESCRIPTION: 'When' with 'else' branch and type test condition on nullanle Unit.
+fun case_10(value: Any): String = when (value) {
+    is Unit? -> ""
     else -> ""
 }

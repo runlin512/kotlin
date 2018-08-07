@@ -16,6 +16,6 @@ fun case_1(): String = when {
 // CASE DESCRIPTION: 'When' with only one 'else' branch ('when' used as statement).
 fun case_2(): String {
     when {
-        else -> {return ""}
+        else -> { return "" }
     }
 }

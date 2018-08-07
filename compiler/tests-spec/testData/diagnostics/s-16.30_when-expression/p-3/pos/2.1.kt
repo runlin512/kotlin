@@ -66,8 +66,3 @@ fun case_2(
         else -> ""
     }
 }
-
-// CASE DESCRIPTION: 'When' with only one 'else' branch.
-fun case_3(): String = when {
-    else -> ""
-}
