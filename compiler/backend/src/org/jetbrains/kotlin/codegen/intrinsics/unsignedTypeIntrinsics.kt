@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
+private val KOTLIN_PACKAGE_FQNAME = FqName("kotlin")
+
 enum class IntegerTypePair(val asmType: Type, val bitwiseType: Type) {
     Byte(Type.BYTE_TYPE, Type.INT_TYPE),
     Short(Type.SHORT_TYPE, Type.INT_TYPE),
@@ -29,10 +31,10 @@ private fun IntrinsicsMap.declareIntrinsicMethod(classFqName: FqName, methodName
     registerIntrinsic(classFqName, null, methodName, arity, implementation)
 }
 
-class UnsignedToSignedConversion(private val fromType: IntegerTypePair, private val toType: IntegerTypePair) : IntrinsicMethod() {
+class ConversionWithUnsigned(private val fromType: IntegerTypePair, private val toType: IntegerTypePair) : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
         createUnaryIntrinsicCallable(method) { v ->
-            v.coerceUnsignedToSigned(fromType, toType)
+            v.coerceWithUnsigned(fromType, toType)
         }
 }
 
@@ -49,11 +51,12 @@ private fun InstructionAdapter.putSizeMask(type: IntegerTypePair, bitwiseType: T
     }
 }
 
-private fun InstructionAdapter.coerceUnsignedToSigned(fromType: IntegerTypePair, toType: IntegerTypePair) {
+private fun InstructionAdapter.coerceWithUnsigned(fromType: IntegerTypePair, toType: IntegerTypePair) {
     when {
         // Widening conversion
         // E.g.:
         // UByte.toShort() = data.toShort() and 0xFF
+        // Byte.toUShort() = UShort(this.toShort() and 0xFF)
         // UShort.toInt() = data.toInt() and 0xFFFF
         // UInt.toLong() = data.toLong() and 0xFFFF_FFFF
         fromType < toType -> {
@@ -78,7 +81,9 @@ private fun InstructionAdapter.coerceUnsignedToSigned(fromType: IntegerTypePair,
 internal fun IntrinsicsMap.registerIntrinsics() {
     for (fromType in IntegerTypePair.values()) {
         for (toType in IntegerTypePair.values()) {
-            declareIntrinsicMethod(fromType.unsignedFqName, toType.toSigned, 0, UnsignedToSignedConversion(fromType, toType))
+            val conversionWithUnsigned = ConversionWithUnsigned(fromType, toType)
+            declareIntrinsicMethod(fromType.unsignedFqName, toType.toSigned, 0, conversionWithUnsigned)
+            registerIntrinsic(KOTLIN_PACKAGE_FQNAME, fromType.signedFqName.toUnsafe(), toType.toUnsigned, 0, conversionWithUnsigned)
         }
     }
 }

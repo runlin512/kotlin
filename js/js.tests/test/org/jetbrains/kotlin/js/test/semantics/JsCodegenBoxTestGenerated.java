@@ -20675,6 +20675,26 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/eqeq.kt");
             }
 
+            @TestMetadata("signedToUByte.kt")
+            public void testSignedToUByte() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/signedToUByte.kt");
+            }
+
+            @TestMetadata("signedToUInt.kt")
+            public void testSignedToUInt() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/signedToUInt.kt");
+            }
+
+            @TestMetadata("signedToULong.kt")
+            public void testSignedToULong() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/signedToULong.kt");
+            }
+
+            @TestMetadata("signedToUShort.kt")
+            public void testSignedToUShort() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/signedToUShort.kt");
+            }
+
             @TestMetadata("toByte.kt")
             public void testToByte() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toByte.kt");
