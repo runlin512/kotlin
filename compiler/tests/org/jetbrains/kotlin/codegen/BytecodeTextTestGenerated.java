@@ -2169,6 +2169,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             public void testToSignedTypeIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics/toSignedTypeIntrinsic.kt");
             }
+
+            @TestMetadata("toUnsignedTypeIntrinsic.kt")
+            public void testToUnsignedTypeIntrinsic() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unsignedArithmetics/toUnsignedTypeIntrinsic.kt");
+            }
         }
     }
 

@@ -19719,6 +19719,26 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testToShort() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toShort.kt");
             }
+
+            @TestMetadata("toUByte.kt")
+            public void testToUByte() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toUByte.kt");
+            }
+
+            @TestMetadata("toUInt.kt")
+            public void testToUInt() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toUInt.kt");
+            }
+
+            @TestMetadata("toULong.kt")
+            public void testToULong() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toULong.kt");
+            }
+
+            @TestMetadata("toUShort.kt")
+            public void testToUShort() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArithmetics/toUShort.kt");
+            }
         }
     }
 

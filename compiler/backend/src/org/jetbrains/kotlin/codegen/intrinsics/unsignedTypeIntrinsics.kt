@@ -57,8 +57,8 @@ private fun InstructionAdapter.coerceWithUnsigned(fromType: IntegerTypePair, toT
         // E.g.:
         // UByte.toShort() = data.toShort() and 0xFF
         // Byte.toUShort() = UShort(this.toShort() and 0xFF)
-        // UShort.toInt() = data.toInt() and 0xFFFF
-        // UInt.toLong() = data.toLong() and 0xFFFF_FFFF
+        // UByte.toUShort() = data.toUShort()
+        //                  == UShort(data.toShort() and 0xFF)
         fromType < toType -> {
             StackValue.coerce(fromType.asmType, toType.asmType, this)
             putSizeMask(fromType, toType.bitwiseType)
@@ -83,6 +83,7 @@ internal fun IntrinsicsMap.registerIntrinsics() {
         for (toType in IntegerTypePair.values()) {
             val conversionWithUnsigned = ConversionWithUnsigned(fromType, toType)
             declareIntrinsicMethod(fromType.unsignedFqName, toType.toSigned, 0, conversionWithUnsigned)
+            declareIntrinsicMethod(fromType.unsignedFqName, toType.toUnsigned, 0, conversionWithUnsigned)
             registerIntrinsic(KOTLIN_PACKAGE_FQNAME, fromType.signedFqName.toUnsafe(), toType.toUnsigned, 0, conversionWithUnsigned)
         }
     }
