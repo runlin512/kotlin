@@ -309,9 +309,7 @@ class CallCompleter(
 
     private fun createTypeForConvertableConstant(constant: CompileTimeConstant<*>): SimpleType? {
         val value = constant.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<Number>()?.toLong() ?: return null
-        val typeConstructor = IntegerValueTypeConstructor(
-            value, moduleDescriptor, constant.parameters
-        )
+        val typeConstructor = IntegerValueTypeConstructor(value, moduleDescriptor, constant.parameters)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             Annotations.EMPTY, typeConstructor, emptyList(), false,
             ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
@@ -332,11 +330,15 @@ class CallCompleter(
         var updatedType: KotlinType? = recordedType
 
         val results = completeCallForArgument(deparenthesized, context)
+
         if (results != null && results.isSingleResult) {
             val resolvedCall = results.resultingCall
-            updatedType = if (resolvedCall.hasInferredReturnType()) {
-                resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
-            } else null
+            val constant = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
+            if (constant == null || !ArgumentTypeResolver.constantCanBeConvertedToUnsigned(constant)) {
+                updatedType = if (resolvedCall.hasInferredReturnType()) {
+                    resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
+                } else null
+            }
         }
 
         // For the cases like 'foo(1)' the type of '1' depends on expected type (it can be Int, Byte, etc.),
