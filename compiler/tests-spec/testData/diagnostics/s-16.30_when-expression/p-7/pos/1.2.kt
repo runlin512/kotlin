@@ -37,13 +37,13 @@ fun case_3(value: _SealedClass): String = when (value) {
 
 // CASE DESCRIPTION: 'When' with type test condition on the not all possible subtypes of the nullable sealed class and 'else' branch.
 fun case_4(value: _SealedClass?): String = when (value) {
-    is _SealedChild1? -> ""
-    is _SealedChild2? -> ""
+    is _SealedChild1? -> "" // if value is null then this branch will be executed
+    is _SealedChild2 -> ""
     else -> ""
 }
 
 // CASE DESCRIPTION: 'When' with type test condition on the all possible subtypes of the sealed class and 'else' branch (redundant).
-fun case_4(value: _SealedClass): String = when (value) {
+fun case_5(value: _SealedClass): String = when (value) {
     is _SealedChild1 -> ""
     is _SealedChild2 -> ""
     is _SealedChild3 -> ""
@@ -51,6 +51,13 @@ fun case_4(value: _SealedClass): String = when (value) {
 }
 
 // CASE DESCRIPTION: 'When' with type test condition on the empty sealed class.
-fun case_5(value: _SealedClassEmpty): String = when (value) {
+fun case_6(value: _SealedClassEmpty): String = when (value) {
+    else -> ""
+}
+
+// CASE DESCRIPTION: 'When' as expression with type test condition on the not all possible subtypes of the nullable sealed class and with two nullable type check.
+fun case_7(value: _SealedClass?): String = when (value) {
+    is _SealedChild1? -> "" // if value is null then this branch will be executed
+    is _SealedChild2? -> "" // redundant nullable type check
     else -> ""
 }

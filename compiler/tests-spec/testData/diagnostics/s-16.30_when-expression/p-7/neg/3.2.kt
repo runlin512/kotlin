@@ -25,14 +25,12 @@ fun case_2(
     value: Int,
     value1: Int,
     value2: Any,
-    value3: Nothing,
-    <!UNUSED_PARAMETER!>value4<!>: Unit,
+    value3: Nothing
 ): String {
     when (value) {
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER, TYPE_MISMATCH_IN_RANGE!>in<!> value1 -> {}
         <!UNRESOLVED_REFERENCE_WRONG_RECEIVER, TYPE_MISMATCH_IN_RANGE!>in<!> value2 -> {}
         <!OVERLOAD_RESOLUTION_AMBIGUITY, TYPE_MISMATCH_IN_RANGE, UNREACHABLE_CODE!>in<!> value3 -> <!UNREACHABLE_CODE!>{}<!>
-        <!UNREACHABLE_CODE!><!UNRESOLVED_REFERENCE_WRONG_RECEIVER, TYPE_MISMATCH_IN_RANGE!>in<!> value4 -> {}<!>
     }
 
     return ""

@@ -1,3 +1,4 @@
+// !WITH_CLASSES
 // !WITH_BASIC_TYPES
 
 /*

@@ -296,3 +296,56 @@ fun case_14(value: Long, value1: Long, value2: _BasicTypesProvider): String {
         else -> ""
     }
 }
+
+// CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Long.
+fun case_15(value: Number, value1: Long, value2: _BasicTypesProvider): String {
+    val value3: Float = -.34939942345f
+
+    when (value) {
+        11345342345L -> return ""
+        (8.toByte() % 5.toByte()).toByte() -> return ""
+        4 - 3 -> return ""
+        -.000001f / 3F -> return ""
+        8L % 5L -> return ""
+        2.4 -> return ""
+        value1 * getDouble(-100) -> return ""
+        32L shl value3.toInt() -> return ""
+        value1 shr value2.getLong(1000).toInt() -> return ""
+        64L ushr getLong(1000).toInt() -> return ""
+        2.111111f + value3 * 11f / 0.113F % 0.1F - 2.0f -> return ""
+        33244523442345L or 5L -> return ""
+        value1 xor 932452342345L -> return ""
+        Int.MIN_VALUE.inv() -> return ""
+        Int.MAX_VALUE.hashCode().toLong() -> return ""
+        value1 * value3 -> return ""
+        (value1 * 2.toByte() / 10.toByte() - 5.toByte() + 14.toByte() / getByte(1000) % 4.toByte() * value2.getByte(1000)).toByte() -> return ""
+    }
+
+    return ""
+}
+
+// CASE DESCRIPTION: 'When' with 'when condition' as arithmetic expression with Long, and 'else' branch.
+fun case_16(value: Number, value1: Long, value2: _BasicTypesProvider): String {
+    val value3: Float = -.34939942345f
+
+    return when (value) {
+        11345342345L -> return ""
+        (8.toByte() % 5.toByte()).toByte() -> ""
+        4 - 3 -> ""
+        -.000001f / 3F -> ""
+        8L % 5L -> ""
+        2.4 -> ""
+        value1 * getDouble(-100) -> ""
+        32L shl value3.toInt() -> ""
+        value1 shr value2.getLong(1000).toInt() -> ""
+        64L ushr getLong(1000).toInt() -> ""
+        2.111111f + value3 * 11f / 0.113F % 0.1F - 2.0f -> ""
+        33244523442345L or 5L -> ""
+        value1 xor 932452342345L -> ""
+        Int.MIN_VALUE.inv() -> ""
+        Int.MAX_VALUE.hashCode().toLong() -> ""
+        value1 * value3 -> ""
+        (value1 * 2.toByte() / 10.toByte() - 5.toByte() + 14.toByte() / getByte(1000) % 4.toByte() * value2.getByte(1000)).toByte() -> ""
+        else -> ""
+    }
+}

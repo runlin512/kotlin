@@ -1,10 +1,10 @@
 /*
- KOTLIN DIAGNOSTIC SPEC TEST (NEGATIVE)
+ KOTLIN PSI SPEC TEST (NEGATIVE)
 
  SECTION 16.30: When expression
  PARAGRAPH: 3
  SENTENCE 2: Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
- NUMBER: 3
+ NUMBER: 2
  DESCRIPTION: 'When' without bound value and with invalid list of the boolean conditions in 'when entry'.
  */
 
@@ -18,7 +18,6 @@ fun case_1(value1: Int, value2: Any, value3: IntRange): String {
 
     return ""
 }
-
 
 // CASE DESCRIPTION: 'When' with list of expressions and an double comma.
 fun case_2(value1: Int, value2: Any, value3: IntRange): String {

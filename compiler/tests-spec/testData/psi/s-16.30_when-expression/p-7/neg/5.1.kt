@@ -1,10 +1,10 @@
 /*
- KOTLIN DIAGNOSTIC SPEC TEST (NEGATIVE)
+ KOTLIN PSI SPEC TEST (NEGATIVE)
 
  SECTION 16.30: When expression
  PARAGRAPH: 7
  SENTENCE 5: Any other expression.
- NUMBER: 2
+ NUMBER: 1
  DESCRIPTION: 'When' with bound value and not allowed spread operator in 'when condition'.
  */
 

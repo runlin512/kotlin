@@ -12,8 +12,8 @@ fun case_1(value: Int, value1: Collection<Int>, value2: Collection<Int>?) {
     when (value) {
         1 -> value1 as MutableList<Int>
         2 -> value2 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
-        3 -> value2 as? MutableMap<Int, Int>?
-        4 -> value2 as MutableMap<Int, Int>?
+        3 -> value2 <!UNCHECKED_CAST!>as? MutableMap<Int, Int>?<!>
+        4 -> value2 <!UNCHECKED_CAST!>as MutableMap<Int, Int>?<!>
         5 -> (value1 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
         6 -> {
             (value1 as List<Int>) as MutableList<Int>

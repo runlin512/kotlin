@@ -1,4 +1,5 @@
-// !WITH_TYPEALIASES
+// !WITH_CLASSES
+// !WITH_OBJECTS
 
 /*
  KOTLIN DIAGNOSTIC SPEC TEST (POSITIVE)
@@ -7,39 +8,14 @@
  PARAGRAPH: 7
  SENTENCE 1: Type test condition: type checking operator followed by type.
  NUMBER: 4
- DESCRIPTION: 'When' with bound value and type test condition with type aliases.
+ DESCRIPTION: 'When' with custom object and companion object of class as type checking operator value.
  */
 
-// CASE DESCRIPTION: 'When' with type checking operator on the two typealiases (one of which is equal to the source type).
 fun case_1(value: Any): String {
     when (value) {
-        is _TypeAliasInt -> return ""
-        <!USELESS_IS_CHECK!>is _TypeAliasAny<!> -> return ""
+        is _EmptyObject -> return ""
+        is _ClassWithCompanionObject.Companion -> return ""
     }
 
     return ""
-}
-
-// CASE DESCRIPTION: 'When' with type checking operator on the one typealias and 'else' branch.
-fun case_2(value: Any): String = when (value) {
-    is _TypeAliasInt -> ""
-    else -> ""
-}
-
-// CASE DESCRIPTION: 'When' with type checking operator on the one typealias which is equal to the source type, and 'else' branch.
-fun case_3(value: Any): String = when (value) {
-    <!USELESS_IS_CHECK!>is _TypeAliasAny<!> -> ""
-    else -> ""
-}
-
-// CASE DESCRIPTION: 'When' with type checking operator on the one typealias which is not equal to the source type, and 'else' branch.
-fun case_4(value: Any): String = when (value) {
-    is _TypeAliasUnit -> ""
-    else -> ""
-}
-
-// CASE DESCRIPTION: 'When' with type checking operator on the Nothing typealias, and 'else' branch.
-fun case_5(value: Any): String = when (value) {
-    is _TypeAliasNothing -> ""
-    else -> ""
 }

@@ -137,3 +137,16 @@ fun case_10(value: Boolean, value1: Boolean, value2: Boolean): String = when (va
     value1 === !!false || !(false && true) -> ""
     else -> ""
 }
+
+/*
+ CASE DESCRIPTION: 'When' as expression with subtype of Boolean (Boolean or Nothing) equality expressions in 'when condition' and 'else' branch.
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-25948
+ */
+fun case_11(value: Boolean, value1: Boolean, value2: Boolean, <!UNUSED_PARAMETER!>value3<!>: Boolean) {
+    when (value) {
+        value1 == value2 || <!UNREACHABLE_CODE!>(return return<!> return<!UNREACHABLE_CODE!>) != throw Exception()<!> -> return
+        return <!UNREACHABLE_CODE!>== (throw throw throw throw Exception()) && (throw Exception()) == throw throw throw throw Exception()<!> -> <!UNREACHABLE_CODE!>return<!>
+        <!UNREACHABLE_CODE!>else -> return<!>
+    }
+}

@@ -222,6 +222,11 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                     runTest("compiler/tests-spec/testData/psi/s-16.30_when-expression/p-7/neg/3.1.kt");
                 }
 
+                @TestMetadata("5.1.kt")
+                public void test5_1() throws Exception {
+                    runTest("compiler/tests-spec/testData/psi/s-16.30_when-expression/p-7/neg/5.1.kt");
+                }
+
                 @TestMetadata("7.1.kt")
                 public void test7_1() throws Exception {
                     runTest("compiler/tests-spec/testData/psi/s-16.30_when-expression/p-7/neg/7.1.kt");

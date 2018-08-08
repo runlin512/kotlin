@@ -4,7 +4,7 @@
  SECTION 16.30: When expression
  PARAGRAPH: 3
  SENTENCE 2: Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
- NUMBER: 2
+ NUMBER: 1
  DESCRIPTION: 'When' without bound value and with invalid 'else' branch.
  */
 

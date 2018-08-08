@@ -37,3 +37,16 @@ fun case_4(value: Boolean, value1: Boolean, value2: Boolean, value3: Boolean): S
     value2 && !!value1 && (!!!value3 || value1) -> ""
     else -> ""
 }
+
+/*
+ CASE DESCRIPTION: 'When' with subtype of Boolean (Boolean or Nothing), and 'else' branch.
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-25948
+ */
+fun case_5(value: Boolean, value1: Boolean, value2: Boolean, value3: Boolean): String {
+    when (value) {
+        value1 && value2 || !!!value3 -> return ""
+        value2 && (return "") && ((throw Exception()) <!UNREACHABLE_CODE!>|| !!value1<!>) -> return ""
+        else -> return ""
+    }
+}

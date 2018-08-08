@@ -4,8 +4,8 @@
  KOTLIN DIAGNOSTIC SPEC TEST (POSITIVE)
 
  SECTION 16.30: When expression
- PARAGRAPH: 6
- SENTENCE 1: When expression with bound value (the form where the expression enclosed in parantheses is present) are very similar to the form without bound value, but use different syntax for conditions.
+ PARAGRAPH: 7
+ SENTENCE 5: When expression with bound value (the form where the expression enclosed in parantheses is present) are very similar to the form without bound value, but use different syntax for conditions.
  NUMBER: 25
  DESCRIPTION: 'When' with bound value and a enumeration values of the some type with bound value in 'when entry'.
  */
@@ -170,19 +170,19 @@ fun case_17(value: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
             when (value) {
-                return, throw Exception() -> return
-                return return return return, throw throw throw Exception() -> return
-                break@loop1, continue@loop2, null -> return
+                <!UNREACHABLE_CODE!>return, throw Exception() -> return<!>
+                <!UNREACHABLE_CODE!>return return return return, throw throw throw Exception() -> return<!>
+                <!UNREACHABLE_CODE!>break@loop1, continue@loop2, <!SENSELESS_NULL_IN_WHEN!>null<!> -> return<!>
             }
         }
     }
 
-    return
+    <!UNREACHABLE_CODE!>return<!>
 }
 
 // CASE DESCRIPTION: 'When' as expression with list of nullable Nothing.
-fun case_18(value: Nothing?): String = when (value) {
-    throw Exception(), return "" -> return ""
-    null, return return return "", throw throw throw Exception() -> return ""
-    else -> return ""
+fun case_18(value: Nothing?): String = when (<!DEBUG_INFO_CONSTANT!>value<!>) {
+    throw Exception()<!UNREACHABLE_CODE!><!>, <!UNREACHABLE_CODE!>return ""<!> -> <!UNREACHABLE_CODE!>return ""<!>
+    <!UNREACHABLE_CODE!>null, return return return "", throw throw throw Exception() -> return ""<!>
+    <!UNREACHABLE_CODE!>else -> return ""<!>
 }
