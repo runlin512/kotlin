@@ -317,7 +317,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                             putValueArgument(1, receiverValue)
                             //TODO use receiver from base class
                             receiver?.let {
-                                +irSetField(irGet(functionReferenceThis.owner), receiverValue, argumentToPropertiesMap[it]!!.owner)
+                                +irSetField(irGet(functionReferenceThis.owner), argumentToPropertiesMap[it]!!.owner, receiverValue)
                             }
                         }
                         +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, context.irBuiltIns.unitType)
