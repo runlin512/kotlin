@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
+const val IMPLICIT_RECEIVER_PARAM_NAME_PREFIX = "\$\$implicitReceiver"
+
 class LazyScriptClassMemberScope(
     resolveSession: ResolveSession,
     declarationProvider: ClassMemberDeclarationProvider,
@@ -41,7 +43,7 @@ class LazyScriptClassMemberScope(
         if (baseConstructorDescriptor != null) {
             val implicitReceiversParamTypes =
                 scriptDescriptor.implicitReceivers.mapIndexed { idx, receiver ->
-                    scriptDescriptor.getImplicitReceiverName(idx) to receiver.defaultType
+                    "$IMPLICIT_RECEIVER_PARAM_NAME_PREFIX$idx" to receiver.defaultType
                 }
             val environmentVarsParamTypes =
                 scriptDescriptor.scriptEnvironmentProperties.map {

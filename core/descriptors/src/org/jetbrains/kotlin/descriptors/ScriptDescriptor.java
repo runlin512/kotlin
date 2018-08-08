@@ -32,7 +32,4 @@ public interface ScriptDescriptor extends ClassDescriptor {
 
     @NotNull
     List<PropertyDescriptor> getScriptEnvironmentProperties();
-
-    @NotNull
-    String getImplicitReceiverName(Integer index);
 }

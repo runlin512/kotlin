@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
@@ -152,15 +151,11 @@ class ScriptCodegen private constructor(
 
                 iv.load(0, classType)
 
-                fun Int.incrementIf(cond: Boolean): Int = if (cond) plus(1) else this
-                val valueParamStart = 1
-                    .incrementIf(scriptContext.earlierScripts.isNotEmpty())
-
                 val valueParameters = scriptDescriptor.unsubstitutedPrimaryConstructor.valueParameters
                 for (superclassParam in ctorDesc.valueParameters) {
                     val valueParam = valueParameters.first { it.name == superclassParam.name }
                     val paramType = typeMapper.mapType(valueParam.type)
-                    iv.load(valueParam!!.index + valueParamStart, paramType)
+                    iv.load(valueParam!!.index + scriptContext.ctorValueParametersStart + 1, paramType)
                     frameMap.enterTemp(paramType)
                 }
 
@@ -174,16 +169,17 @@ class ScriptCodegen private constructor(
             }
             iv.load(0, classType)
 
-            scriptDescriptor.implicitReceivers.forEachIndexed() { receiverIndex, receiver ->
+            scriptDescriptor.implicitReceivers.forEachIndexed { receiverIndex, receiver ->
                 val receiversParamIndex = frameMap.enterTemp(AsmUtil.getArrayType(OBJECT_TYPE))
                 val name = scriptContext.getImplicitReceiverName(receiverIndex)
                 genFieldFromParam(typeMapper.mapClass(receiver), receiversParamIndex, name)
             }
 
-            scriptDescriptor.scriptEnvironmentProperties.forEach {
-                val fieldClassType = typeMapper.mapType(it)
+            scriptDescriptor.scriptEnvironmentProperties.forEachIndexed { envVarIndex, envVar ->
+                val fieldClassType = typeMapper.mapType(envVar)
                 val envVarParamIndex = frameMap.enterTemp(fieldClassType)
-                genFieldFromParam(fieldClassType, envVarParamIndex, it.name.identifier)
+                val name = scriptContext.getEnvironmentVarName(envVarIndex)
+                genFieldFromParam(fieldClassType, envVarParamIndex, name)
             }
 
             val codegen = ExpressionCodegen(mv, frameMap, Type.VOID_TYPE, methodContext, state, this)
@@ -218,13 +214,12 @@ class ScriptCodegen private constructor(
                 null
             )
         }
-        for (envVarProp in scriptDescriptor.scriptEnvironmentProperties) {
-            val varType = typeMapper.mapType(envVarProp.type)
+        for (envVarIndex in scriptDescriptor.scriptEnvironmentProperties.indices) {
             classBuilder.newField(
                 NO_ORIGIN,
                 ACC_PUBLIC or ACC_FINAL,
-                envVarProp.name.identifier,
-                varType.descriptor,
+                scriptContext.getEnvironmentVarName(envVarIndex),
+                scriptContext.getEnvironmentVarType(envVarIndex).descriptor,
                 null,
                 null
             )
