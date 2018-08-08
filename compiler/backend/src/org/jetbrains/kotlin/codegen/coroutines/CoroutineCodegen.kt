@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -202,11 +203,29 @@ class CoroutineCodegenForLambda private constructor(
         generateResumeImpl()
     }
 
+    private fun getErasedCreateFunction(): FunctionDescriptor {
+        val argumentTypesSize = typeMapper.mapSignatureSkipGeneric(createCoroutineDescriptor).asmMethod.argumentTypes.size
+        assert(argumentTypesSize == 1 || argumentTypesSize == 2) {
+            "too many arguments of create: $argumentTypesSize: $createCoroutineDescriptor"
+        }
+        createCoroutineDescriptor.module.resolveClassByFqName(
+            languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("BaseContinuationImpl")),
+            NoLookupLocation.FROM_BACKEND
+        )?.defaultType?.memberScope?.getContributedFunctions(createCoroutineDescriptor.name, NoLookupLocation.FROM_BACKEND)
+            ?.find { it.valueParameters.size == argumentTypesSize }?.let { return it }
+        error("BaseContinuationImpl is not found")
+    }
+
+    private fun doNotGenerateTyped(): Boolean {
+        return originalSuspendFunctionDescriptor !is SimpleFunctionDescriptor && languageVersionSettings.isReleaseCoroutines()
+    }
+
     override fun generateBody() {
         super.generateBody()
 
         // create() = ...
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, createCoroutineDescriptor,
+        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN,
+                                       if (doNotGenerateTyped()) getErasedCreateFunction() else createCoroutineDescriptor,
                                        object : FunctionGenerationStrategy.CodegenBased(state) {
                                            override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                                                generateCreateCoroutineMethod(codegen)
@@ -221,7 +240,7 @@ class CoroutineCodegenForLambda private constructor(
                                            }
                                        })
 
-        if (allFunctionParameters().size <= 1) {
+        if (!doNotGenerateTyped() && allFunctionParameters().size <= 1) {
             val delegate = typeMapper.mapSignatureSkipGeneric(createCoroutineDescriptor).asmMethod
 
             val bridgeParameterAsmTypes =
@@ -293,7 +312,11 @@ class CoroutineCodegenForLambda private constructor(
             }
 
             // load resultContinuation
-            load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+            if (doNotGenerateTyped()) {
+                load(allFunctionParameters().size + 1, AsmTypes.OBJECT_TYPE)
+            } else {
+                load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+            }
 
             invokespecial(owner.internalName, constructorToUseFromInvoke.name, constructorToUseFromInvoke.descriptor, false)
 
@@ -305,7 +328,13 @@ class CoroutineCodegenForLambda private constructor(
             for (parameter in allFunctionParameters()) {
                 val fieldInfoForCoroutineLambdaParameter = parameter.getFieldInfoForCoroutineLambdaParameter()
                 load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
-                AsmUtil.genAssignInstanceFieldFromParam(fieldInfoForCoroutineLambdaParameter, index, this, cloneIndex)
+                AsmUtil.genAssignInstanceFieldFromParam(
+                    fieldInfoForCoroutineLambdaParameter,
+                    index,
+                    this,
+                    cloneIndex,
+                    doNotGenerateTyped()
+                )
                 index += fieldInfoForCoroutineLambdaParameter.fieldType.size
             }
 
