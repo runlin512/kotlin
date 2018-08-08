@@ -1,0 +1,1 @@
+[common.kt] Supertype 5 expect class Inheritor : OClass
